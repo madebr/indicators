@@ -51,25 +51,18 @@ class IndicatorsConan(ConanFile):
                 programs.append(os.path.join(self.build_folder, "bin", match.group(1)))
         return programs
 
-    @contextmanager
-    def _build_context(self):
-        with tools.vcvars(self.settings) if self.settings.compiler == "Visual Studio" else tools.no_op():
-            yield
-
     def build(self):
-        with self._build_context():
-            cmake = self._configure_cmake()
-            cmake.build()
-            cmake.build(target="package_source")
-            # if tools.get_env("CONAN_RUN_TESTS", default=False):
-            #     for program in self._test_programs:
-            #         self.output.info("Running program '{}'".format(program))
-            #         self.run(program, run_environment=True)
+        cmake = self._configure_cmake()
+        cmake.build()
+        cmake.build(target="package_source")
+        # if tools.get_env("CONAN_RUN_TESTS", default=False):
+        #     for program in self._test_programs:
+        #         self.output.info("Running program '{}'".format(program))
+        #         self.run(program, run_environment=True)
 
     def package(self):
-        with self._build_context():
-            cmake = self._configure_cmake()
-            cmake.install()
+        cmake = self._configure_cmake()
+        cmake.install()
 
     def package_id(self):
         self.info.header_only()
